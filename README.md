@@ -1,5 +1,6 @@
 # FontFinder
 Find all font types in use in Word, Excel or PowerPoint files
+
 Tested in Office 2007
 
 ## Usage
