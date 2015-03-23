@@ -17,7 +17,7 @@ Option Explicit
 '
 Sub PrintFontsInFolder(Filetype As eFileType, Optional Path)
     Dim objFolder As cFolder
-    Dim objFile As file
+    Dim objFile As File
     Dim objCFile As cFile
     Dim vFont As Variant
     Dim colFonts As Collection
@@ -29,12 +29,12 @@ Sub PrintFontsInFolder(Filetype As eFileType, Optional Path)
     Else
         objFolder.Path = Path
     End If
-    
+       
     ' collect files
     For Each objFile In objFolder.Files
         Set objCFile = New cFile
         Set objCFile.oFile = objFile
-        objCFile.IncludeInstalled = True
+        objCFile.includeInstalled = True
         ' collect fonts
         Set colFonts = objCFile.Fonts
         For Each vFont In colFonts

@@ -16,7 +16,11 @@ Attribute VB_Exposed = False
 
 Option Explicit
 
-Private ctlFiletypes As Collection
+Private colExtensions As Collection
+
+Private objWordDocument As cOfficeWordDocument
+Private objExcelDocument As cOfficeExcelDocument
+Private objPowerpointDocument As cOfficePowerPointDocument
 
 Public Enum eFileType
     [_first] = 1
@@ -27,30 +31,84 @@ Public Enum eFileType
     [_last] = 4
 End Enum
 
-Const sFiletypeWord As String = "Word 2007 Document"
-Const sFiletypeExcel As String = "Microsoft Office Excel 2007 Workbook"
-Const sFiletypePowerpoint As String = "Microsoft Office PowerPoint 2007 Presentation"
+Const sFiletypeWord As String = "docx"
+Const sFiletypeExcel As String = "xlsx"
+Const sFiletypePowerpoint As String = "pptx"
 Const sFiletypeAll As String = ""
 
-Public Function FileTypeName(Filetype As eFileType) As String
-    FileTypeName = ctlFiletypes(Filetype)
+
+'---------------------------------------------------------------------------------------
+' Procedure : Extension
+' Author    : Michiel van der Blonk (blonkm@gmail.com)
+' Date      : 3/22/2015
+' Purpose   : get the extension for filetype, e.g. tWord => "docx"
+'---------------------------------------------------------------------------------------
+'
+Public Function Extension(Filetype As eFileType) As String
+    Extension = colExtensions(Filetype)
 End Function
 
-Public Function getType(objFile As file) As eFileType
+
+'---------------------------------------------------------------------------------------
+' Procedure : getType
+' Author    : Michiel van der Blonk (blonkm@gmail.com)
+' Date      : 3/22/2015
+' Purpose   : get file type for a file. E.g. "file.docx" => tWord
+'---------------------------------------------------------------------------------------
+'
+Public Function getType(ByVal objFile As Object) As eFileType
     Dim n As eFileType
+    Dim objFS ' As FileSystemObject
     
+    Set objFS = CreateObject("Scripting.FileSystemObject")
     getType = tAll
     For n = eFileType.[_first] To eFileType.[_last]
-        If objFile.Type = ctlFiletypes(n) Then
+        If objFS.GetExtensionName(objFile) = colExtensions(n) Then
             getType = n
         End If
     Next
 End Function
 
+'---------------------------------------------------------------------------------------
+' Procedure : IsOfficeDocument
+' Author    : Michiel van der Blonk (blonkm@gmail.com)
+' Date      : 3/22/2015
+' Purpose   : check if a file is a word, excel or powerpoint file
+'             preconditions: last filetype is "*.*"
+'---------------------------------------------------------------------------------------
+'
+Public Function IsOfficeDocument(objFile As Object) As Boolean
+    IsOfficeDocument = getType(objFile) < eFileType.[_last]
+End Function
+
+
+'---------------------------------------------------------------------------------------
+' Procedure : OfficeDocument
+' Author    : Michiel van der Blonk (blonkm@gmail.com)
+' Date      : 3/22/2015
+' Purpose   : get object corresponding to file type
+'---------------------------------------------------------------------------------------
+'
+Public Function OfficeDocument(Filetype As eFileType) As IOfficeDocument
+    Select Case Filetype
+        Case tWord
+            Set OfficeDocument = objWordDocument
+        Case tExcel
+            Set OfficeDocument = objExcelDocument
+        Case tPowerpoint
+            Set OfficeDocument = objPowerpointDocument
+    End Select
+End Function
+
 Private Sub Class_Initialize()
-    Set ctlFiletypes = New Collection
-    ctlFiletypes.Add sFiletypeWord, "Word"
-    ctlFiletypes.Add sFiletypeExcel, "Excel"
-    ctlFiletypes.Add sFiletypePowerpoint, "Powerpoint"
-    ctlFiletypes.Add sFiletypeAll, ""
+    Set colExtensions = New Collection
+    colExtensions.Add sFiletypeWord, "Word"
+    colExtensions.Add sFiletypeExcel, "Excel"
+    colExtensions.Add sFiletypePowerpoint, "Powerpoint"
+    colExtensions.Add sFiletypeAll, ""
+    
+    ' prepare office document objects
+    Set objWordDocument = New cOfficeWordDocument
+    Set objExcelDocument = New cOfficeExcelDocument
+    Set objPowerpointDocument = New cOfficePowerPointDocument
 End Sub
