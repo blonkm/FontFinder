@@ -11,9 +11,15 @@ or
   * cFile
   * cFolder
   * cTyper
+  * IOfficeDocument
+  * cOfficeExcelDocument
+  * cOfficeWordDocument
+  * cOfficePowerPointDocument
 * add the modules
   * modFiles
   * modFonts
+
+## Optional
 * set references (Tools > References)
   * Microsoft Office 12 Object Library
   * Microsoft Excel 12 Object Library
@@ -21,6 +27,7 @@ or
   * Microsoft Word 12 Object Library
   * Microsoft Scripting Runtime
   
+## Testing
   In the Immediate Window, run "PrintFontsInFolder [type], [path]".
   
   If you leave path empty, the program will use the path of the active document.
